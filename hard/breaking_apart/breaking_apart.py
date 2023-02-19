@@ -1,7 +1,11 @@
+# https://www.codingame.com/ide/puzzle/breaking-apart
+
 # To debug: print("Debug messages...", file=sys.stderr, flush=True)
 # import sys
 import re
 
+def is_vovel(c):
+    return c.lower() in "aeiou"
 
 def split_word(w, space):
     space -= 2  # " " and -
@@ -18,12 +22,7 @@ def split_word(w, space):
         else:
             p2 = "".join(syls[i:])
             break
-    # print(p1, p2)
     return p1, p2
-
-
-def is_vovel(c):
-    return c.lower() in "aeiou"
 
 
 def word2syl(w):
@@ -62,6 +61,8 @@ def word2syl(w):
 
 
 def word2syl_reg(w):
+    # split the given word in sylables using regex
+    # (revers the word to find the sticky consonunts with their vovel)
     regex = r"[^aeiou][aeiou][^aeiou]|[^aeiou][aeiou]|[aeiou][^aeiou]|[aeiou]"
     syls = [s[::-1] for s in re.findall(regex, w[::-1])[::-1]]
     return syls
