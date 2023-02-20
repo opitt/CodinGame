@@ -4,18 +4,17 @@
 # import sys
 import re
 
+
 def is_vovel(c):
     return c.lower() in "aeiou"
 
-def split_word(w, space):
-    space -= 2  # " " and -
-    p1, p2 = "", ""
 
+def split_word(w, space):
+    p1, p2 = "", ""
     syls = word2syl_reg(w)
     if len(syls[0]) == 1:
         syls[1] = syls[0]+syls[1]
         syls = syls[1:]
-
     for i, s in enumerate(syls):
         if len(p1+s) <= space:
             p1 += s
@@ -26,6 +25,7 @@ def split_word(w, space):
 
 
 def word2syl(w):
+    # solution without regular expression
     syls = []
     syl = ""
     vov_found = False
@@ -64,38 +64,39 @@ def word2syl_reg(w):
     # split the given word in sylables using regex
     # (revers the word to find the sticky consonunts with their vovel)
     regex = r"[^aeiou][aeiou][^aeiou]|[^aeiou][aeiou]|[aeiou][^aeiou]|[aeiou]"
-    syls = [s[::-1] for s in re.findall(regex, w[::-1])[::-1]]
+    syls = [s[::-1] for s in re.findall(regex, w[::-1], re.IGNORECASE)[::-1]]
     return syls
 
-
-#length = int(input())
-length = 63
-#words = input().split()
-words = "Sed ut perpiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi arcitecto beatae vitae dicta sun expicabo Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciut Neque porro quisquam et qui dolorem ipsum quia dolor sit amet consectetur adipisci velit sed quia non numquam eius modi tempora incidun ut".split()
-words = "Dertana et alioumatok gorigo te".split()
-for w in words:
-    print(w, word2syl(w))
-    print(w, word2syl_reg(w))
-
-word = ""
-lines = [""]
-while words or word:
-    # take the word, if word is fully used
-    if word == "":
-        word, *words = words
-    # if word fits into current line, use it
-    if length - len(lines[-1]) >= len(word) + 1:
-        lines[-1] = (lines[-1] + f" {word}").lstrip()
-        word = ""
-    else:
-        # split the word
-        part1, part2 = split_word(word, length - len(lines[-1]))
-        if part1:
-            lines[-1] = f"{lines[-1]} {part1}-".lstrip()
-            lines.append("")
-            word = part2
+def solve(length, words):
+    word, lines = "", [""]
+    while words or word:
+        # take the word, if word is fully used
+        if word == "":
+            word, *words = words
+        empty = len(lines[-1]) == 0
+        space = length - len(lines[-1])
+        # if word fits into current line, use it
+        if space >= len(word) + (0 if empty else 1):
+            lines[-1] += ("" if empty else " ") + word
+            word = ""
         else:
-            # try next line
-            lines.append("")
+            # split the word
+            space -= 1  # need to save space for "-"
+            # need to save space for " ", if there are already words in the line
+            space -= 0 if empty else 1
+            part1, part2 = split_word(word, space)
+            if part1:
+                lines[-1] += f"{part1}-" if empty else f" {part1}-"
+                word = part2
+                # the remaining word goes on the next line:
+                lines.append("")
+            else:
+                # word cant be broken to fit in this line. try next line.
+                lines.append("")
+    return lines
 
-print(*lines, sep="\n")
+if __name__ == "__main__":
+    length = int(input())
+    words = input()
+    lines = solve(length, words.split())
+    print(*lines, sep="\n")
