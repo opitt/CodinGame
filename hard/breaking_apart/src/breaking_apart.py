@@ -62,7 +62,7 @@ def word2syl(w):
 
 def word2syl_reg(w):
     # split the given word in sylables using regex
-    # (revers the word to find the sticky consonunts with their vovel)
+    # (revers the word to find the sticky consonants with their vovel)
     regex = r"[^aeiou][aeiou][^aeiou]|[^aeiou][aeiou]|[aeiou][^aeiou]|[aeiou]"
     syls = [s[::-1] for s in re.findall(regex, w[::-1], re.IGNORECASE)[::-1]]
     return syls
