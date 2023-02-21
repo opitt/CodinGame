@@ -38,7 +38,8 @@ def test_solve():
     
     for length, words, expected in TEST_CASES:
         lines = solve(length, words.split())
-        assert all([line==expect for line,expect in zip(lines, expected)])
+        #assert all([line==expect for line,expect in zip(lines, expected)])
+        assert lines == expected
 
 def test_is_vovel():
     assert all([is_vovel(c) == True for c in "aeiou"])
