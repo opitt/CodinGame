@@ -96,7 +96,7 @@ def solve(length, words):
     return lines
 
 if __name__ == "__main__":
-    length = int(input())
-    words = input()
+    length = int(input("Length:"))
+    words = input("Words:")
     lines = solve(length, words.split())
     print(*lines, sep="\n")
